@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Collapse, Button, CardBody, Card, Col, Row } from 'reactstrap';
-import mysql from 'mysql';
+import 'bootstrap/dist/css/bootstrap.css';
 
 import logoSection from './img/bricodsfondblanc.bmp';
 
@@ -11,35 +11,12 @@ class Home extends Component {
         this.state = {
             collapseAccount: false,
             collapseLogin: false,
-            collapsePassword: false
+            collapsePassword: false,
+            login: '',
+            password: ''
         }
-
-        this.db = mysql.createPool({
-            connectionLimit : 10,
-            host: "localhost",
-            port: 3306,
-            user: "root",
-            password: "",
-            database: "cedssectbrico"
-        });
-        /*    
-        console.log('this.db before connect => ', this.db);
-        this.db.query('select * from userds', function(err, res, field) {
-            if (err) throw err;
-            console.log(' The solution is ', res);
-        });*/
-        /*
-        this.db.connect(function(err) {
-            if (err) throw err;
-            console.log('trying to connect ');
-            //this.db
-        });*/
         //console.log('this.db after connect => ', this.db);
         
-        /*
-        this.db.query('select * from userdb', function(err, res, fields){
-            console.log('query is DONE ');
-        });*/
     }
 
     toggleAccount =  () => 
@@ -63,7 +40,6 @@ class Home extends Component {
     render() {
         
         const {user} = this.props;
-    
 
 
         return (
@@ -93,10 +69,10 @@ class Home extends Component {
                             <Row><Col sm="12" md={{size:6, offset: 3 }}>
                             <Card>
                                 <CardBody>
-                                    <form>
+                                    <form method='post' action='createaccount'>
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
+                                        <input type="text" onChange={ (e) => this.setState({login: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
                                     </div>
                                     <br />
                                     <div className="form-group">
@@ -111,14 +87,14 @@ class Home extends Component {
                         <Row><Col sm="12" md={{size:6, offset: 3 }}>
                             <Card>
                                 <CardBody>
-                                    <form>
+                                    <form method='post' action='login'>
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
+                                        <input type="text" onChange={(e) => this.setState({ login: e.target.value })} className="form-control" id="createMatricule" name="matricule" placeholder="Numéro de matricule"></input>
                                     </div>
                                     <div className="form-group">
                                         <label> Mot de Passe </label>
-                                        <input type="password" className="form-control" id="createPassword" placeholder="Password"></input>
+                                        <input type="password" onChange={(e) => this.setState({ password: e.target.value })} className="form-control" id="createPassword" name="password" placeholder="Password"></input>
                                         <br />
                                         <button type="submit" className="btn btn-primary"> Se connecter </button>
                                     </div>
@@ -134,7 +110,7 @@ class Home extends Component {
                                     <form>
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
+                                        <input type="text" onChange={ (e) => this.setState({matricule: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
                                     </div>
                                     <br />
                                     <div className="form-group">
