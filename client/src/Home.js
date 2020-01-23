@@ -107,7 +107,7 @@ class Home extends Component {
                         <Row><Col sm="12" md={{size:6, offset: 3 }}>
                             <Card>
                                 <CardBody>
-                                    <form>
+                                    <form method='post' action='renewpasswd' >
                                     <div className="form-group">
                                         <label> Matricule </label>
                                         <input type="text" onChange={ (e) => this.setState({matricule: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
