@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import { FaUsers } from 'react-icons/fa';
-
+import { IoIosPower } from 'react-icons/io';
 class Navigation extends Component {
 
     render () {
 
-        const { user } = this.props;
-
+        const { user, matricule } = this.props;
+        console.log('Navigation ===>  user:', user, ', matricule:', matricule);
+        const { history } = this.props;
         return (
             <div className="siteNav family-sans navbar navbar-expand bg-primary navbar-dark higher">
                 <div className="container-fluid">
                     <a href="/" className="navbar-brand ">
-                        <FaUsers className="mr-1" /> Bienvenu(e)  {user}
-                    </a>
-                    <a className="nav-brand pull-right" href="/logout" > 
-                        Log Out 
+                        <FaUsers className="mr-1" /> Bienvenu(e)  { matricule }  
+                        <IoIosPower className="mr-1" />
                     </a>
                     <div className="navbar-nav mt-auto">
                         <a className="nav-item nav-link" href="/compte"> Mon Compte </a>

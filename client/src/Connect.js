@@ -1,10 +1,26 @@
 import React, { Component } from 'react';
 import { Collapse, Button, CardBody, Card, Col, Row } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
+import Navigation from './Navigation';
 
 import logoSection from './img/bricodsfondblanc.bmp';
 
-class Home extends Component {
+const login = async(values) => {
+    const response = await fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    });
+    if (response.status !== 200) throw Error(body);
+    const body = await response.body();
+    console.log('get matricule login = ', body.matricule);
+    return <Navigation user={body.matricule} />
+    //return body;
+  }
+
+class Connect extends Component {
 
     constructor(props) {
         super(props);
@@ -15,35 +31,50 @@ class Home extends Component {
             login: '',
             password: ''
         }
-        //console.log('this.db after connect => ', this.db);
-        
     }
 
-    toggleAccount =  () => 
+    handleSuccessfulAuth(data) {
+        console.log('Connect.js , handleSuccessfulAuth(data) ');
+        this.props.handleLogin(data);
+        this.props.history.push('/home');
+    }
+
+    toggleAccount = () =>
         this.setState({ collapseAccount: !this.state.collapseAccount,
                         collapseLogin: false,
                         collapsePassword: false
         })
 
-    toggleLogin = () => 
+    toggleLogin = () =>
         this.setState({ collapseLogin: !this.state.collapseLogin,
                         collapsePassword: false,
                         collapseAccount: false
          })
 
-    togglePassword = () => 
+    togglePassword = () =>
         this.setState({ collapsePassword: !this.state.collapsePassword,
                         collapseLogin: false,
                         collapseAccount: false
          })
 
-    render() {
+    handleLoginSubmit = (e) => {
         
-        const {user} = this.props;
+        console.log('handleLoginSubmit ');
+        login(this.state).then((body) => {
+            if (body.matricule) {
+                this.handleSuccessfulAuth(body);
+                const { history } = this.props;
+                history.push('/home');
+            }
+                
+        });
+    }
+        
 
+    render() {
 
         return (
-            
+
             <div className="container text-center">
                 <div className="row justify-content-center">
                     <div className="col-10 col-md-10 col-lg-8 col-xl-7">
@@ -53,9 +84,9 @@ class Home extends Component {
                         </div>
                         <p className="Lead">
                             Connectez-vous au portail de la section Bricolage du CE DS
-                            pour réserver vos outils. 
+                            pour réserver vos outils.
                         </p>
-                    
+
                         <Button outline color="primary mr-2" id="#createAccount" onClick={this.toggleAccount}>
                             Creation d'un compte </Button>
                         <Button outline color="primary mr-2" id="#login" onClick={this.toggleLogin}>
@@ -72,7 +103,7 @@ class Home extends Component {
                                     <form method='post' action='createaccount'>
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" onChange={ (e) => this.setState({login: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule"></input>
+                                        <input type="text" onChange={ (e) => this.setState({login: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule" required></input>
                                     </div>
                                     <br />
                                     <div className="form-group">
@@ -82,19 +113,19 @@ class Home extends Component {
                                 </CardBody>
                             </Card></Col></Row>
                         </Collapse>
-                       
+
                         <Collapse toggler='#login' isOpen={this.state.collapseLogin}>
                         <Row><Col sm="12" md={{size:6, offset: 3 }}>
                             <Card>
                                 <CardBody>
-                                    <form method='post' action='login'>
+                                    <form method='post' action='login' onSubmit={ (e)=> this.handleLoginSubmit(e)} >
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" onChange={(e) => this.setState({ login: e.target.value })} className="form-control" id="createMatricule" name="matricule" placeholder="Numéro de matricule"></input>
+                                        <input type="text" onChange={(e) => this.setState({ login: e.target.value })} className="form-control" id="createMatricule" name="matricule" placeholder="Numéro de matricule" required></input>
                                     </div>
                                     <div className="form-group">
                                         <label> Mot de Passe </label>
-                                        <input type="password" onChange={(e) => this.setState({ password: e.target.value })} className="form-control" id="createPassword" name="password" placeholder="Password"></input>
+                                        <input type="password" onChange={(e) => this.setState({ password: e.target.value })} className="form-control" id="createPassword" name="password" placeholder="Password" required ></input>
                                         <br />
                                         <button type="submit" className="btn btn-primary"> Se connecter </button>
                                     </div>
@@ -102,7 +133,7 @@ class Home extends Component {
                                 </CardBody>
                             </Card></Col></Row>
                         </Collapse>
-                       
+
                         <Collapse toggler="#password" isOpen={this.state.collapsePassword} >
                         <Row><Col sm="12" md={{size:6, offset: 3 }}>
                             <Card>
@@ -119,18 +150,16 @@ class Home extends Component {
                                     </form>
                                 </CardBody>
                             </Card></Col></Row>
-                        </Collapse> 
-                        
+                        </Collapse>
+
                         <br/>
                         <br/>
                         <br/>
                     </div>
                 </div>
             </div>
-           
-
         );
     }
 }
 
-export default Home;
+export default Connect;

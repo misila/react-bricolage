@@ -29,7 +29,7 @@ var db = mysql.createConnection({
 db.connect();
 
 app.post('/renewpasswd', function (request, response) {
-    console.log('renewpasswd for matricule = ', request.query.matricule);
+    console.log('renewpasswd for matricule = ', request.body.matricule);
     var matricule = request.body.matricule;
 
     var newpassword = generator.generate({
@@ -56,7 +56,6 @@ app.post('/renewpasswd', function (request, response) {
                 response.send('renewpassword OK : ' + newpassword);
     });
 
-
     //db.query
 });
 
@@ -76,9 +75,10 @@ app.post('/login', function (request, response) {
                     var md5request = md5(request.body.password);
 
                     if (md5request === passwd) {
-                        response.send('Authentification OK for matricule ' + matricule);
+                        response.redirect('/home');
+                        console.log('send {',matricule, '} ');
                     }else {
-                        response.send('Authentification KO for matricule ' + matricule+ ', Bad Password');
+                        response.send({ error: 'Bad Password'});
                     }
                   }
               });
