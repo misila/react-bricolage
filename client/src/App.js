@@ -1,13 +1,16 @@
 import React from 'react';
 import Connect from './Connect';
 import Navigation from './Navigation';
+import { createBrowserHistory } from "history";
+import { useHistory } from 'react-router-dom';
+
 import { BrowserRouter as Router,
          Switch,
-         Route,
-         Link,
-         useHistory
+         Route
  } from 'react-router-dom';
 
+
+const history = createBrowserHistory();
 
 const Auth = {
   isAuthenticated: false,
@@ -39,11 +42,14 @@ class App extends React.Component {
   }
 
   handleLogin (data) {
-    console.log(' App.js , handleLogin (matricule=', data.matricule+') ');
+    console.log(' App.js, handleLogin (data = ', data, ') ');
+    history.push('/home');
+
     this.setState({
       loggedInStatus: "LOGGED_IN",
       matricule: data.matricule
     });
+    
   }
 
   handleLogout () {
@@ -55,16 +61,10 @@ class App extends React.Component {
 
   render() {
 
-      console.log('this.state.user = ', this.state.user);
-    /*
+    console.log('this.state.matricule = ', this.state.matricule);
+ 
     return (
-      <div>
-
-        <Home user={this.state.user} />
-      </div>
-    );*/
-    return (
-      <Router>
+      <Router history={history} >
         <div>
         <br />
         <Switch>
@@ -75,7 +75,6 @@ class App extends React.Component {
             </Route>
             <Route exact path="/home"> 
               <Navigation 
-                {...this.props}
                 matricule={this.state.matricule} 
                 handleLogout={this.handleLogout} />
             </Route>

@@ -61,7 +61,7 @@ app.post('/renewpasswd', function (request, response) {
 
 app.post('/login', function (request, response) {
 
-    console.log('matricule = ', request.body.matricule);
+    console.log('app.post(/login) , matricule = ', request.body.matricule);
     db.query('select Matricule as mat, PasswdMD5 as passwd from user where Matricule= ?',
             [request.body.matricule],
             function(err, rows, fields){
@@ -75,9 +75,9 @@ app.post('/login', function (request, response) {
                     var md5request = md5(request.body.password);
 
                     if (md5request === passwd) {
-                        response.redirect('/home');
                         console.log('send {',matricule, '} ');
-                    }else {
+                        response.send({ matricule });
+                    } else {
                         response.send({ error: 'Bad Password'});
                     }
                   }

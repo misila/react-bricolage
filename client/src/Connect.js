@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Collapse, Button, CardBody, Card, Col, Row } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import Navigation from './Navigation';
-
 import logoSection from './img/bricodsfondblanc.bmp';
 
 const login = async(values) => {
+    console.log('Connect.js, login, values=', values);
     const response = await fetch('/login', {
       method: 'POST',
       headers: {
@@ -13,11 +12,12 @@ const login = async(values) => {
       },
       body: JSON.stringify(values),
     });
+
+    const body = await response.json();
+    console.log('body => ', body);
     if (response.status !== 200) throw Error(body);
-    const body = await response.body();
-    console.log('get matricule login = ', body.matricule);
-    return <Navigation user={body.matricule} />
-    //return body;
+console.log('get matricule login = ', body.matricule);
+    return body;
   }
 
 class Connect extends Component {
@@ -28,15 +28,16 @@ class Connect extends Component {
             collapseAccount: false,
             collapseLogin: false,
             collapsePassword: false,
-            login: '',
+            matricule: '',
             password: ''
         }
+        console.log('constructor Connect');
     }
 
     handleSuccessfulAuth(data) {
         console.log('Connect.js , handleSuccessfulAuth(data) ');
         this.props.handleLogin(data);
-        this.props.history.push('/home');
+        // this.props.history.push('/home');
     }
 
     toggleAccount = () =>
@@ -59,14 +60,13 @@ class Connect extends Component {
 
     handleLoginSubmit = (e) => {
         
-        console.log('handleLoginSubmit ');
+        e.preventDefault();
+        console.log('handleLoginSubmit, e.target.value =',e.target.value, ', this.state=', this.state);
+        console.log('this.state = ', this.state);
         login(this.state).then((body) => {
             if (body.matricule) {
                 this.handleSuccessfulAuth(body);
-                const { history } = this.props;
-                history.push('/home');
             }
-                
         });
     }
         
@@ -103,7 +103,7 @@ class Connect extends Component {
                                     <form method='post' action='createaccount'>
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" onChange={ (e) => this.setState({login: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule" required></input>
+                                        <input type="text" onChange={ (e) => this.setState({matricule: e.target.value}) } name="matricule" className="form-control" id="createMatricule" placeholder="Numéro de matricule" required></input>
                                     </div>
                                     <br />
                                     <div className="form-group">
@@ -118,10 +118,10 @@ class Connect extends Component {
                         <Row><Col sm="12" md={{size:6, offset: 3 }}>
                             <Card>
                                 <CardBody>
-                                    <form method='post' action='login' onSubmit={ (e)=> this.handleLoginSubmit(e)} >
+                                    <form method='post' onSubmit={ (e) => this.handleLoginSubmit(e) } >
                                     <div className="form-group">
                                         <label> Matricule </label>
-                                        <input type="text" onChange={(e) => this.setState({ login: e.target.value })} className="form-control" id="createMatricule" name="matricule" placeholder="Numéro de matricule" required></input>
+                                        <input type="text" onChange={(e) => this.setState({ matricule: e.target.value })} className="form-control" id="createMatricule" name="matricule" placeholder="Numéro de matricule" required></input>
                                     </div>
                                     <div className="form-group">
                                         <label> Mot de Passe </label>
