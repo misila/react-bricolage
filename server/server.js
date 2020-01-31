@@ -62,7 +62,7 @@ app.post('/renewpasswd', function (request, response) {
 app.post('/login', function (request, response) {
 
     console.log('app.post(/login) , matricule = ', request.body.matricule);
-    db.query('select Matricule as mat, PasswdMD5 as passwd from user where Matricule= ?',
+    db.query('select Nom as nom, Prenom as prenom, Matricule as mat, PasswdMD5 as passwd from user where Matricule= ?',
             [request.body.matricule],
             function(err, rows, fields){
 
@@ -71,12 +71,14 @@ app.post('/login', function (request, response) {
                 if (rows.length === 1 && rows[0] !== null) {
                     var matricule = rows[0].mat;
                     var passwd = rows[0].passwd;
+                    var nom = rows[0].nom;
+                    var prenom = rows[0].prenom;
 
                     var md5request = md5(request.body.password);
 
                     if (md5request === passwd) {
                         console.log('send {',matricule, '} ');
-                        response.send({ matricule });
+                        response.send({ matricule, nom, prenom });
                     } else {
                         response.send({ error: 'Bad Password'});
                     }

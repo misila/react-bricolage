@@ -41,15 +41,15 @@ class App extends React.Component {
     this.handleLogout = this.handleLogout.bind(this);
   }
 
-  handleLogin (data) {
+  handleLogin (data, history) {
     console.log(' App.js, handleLogin (data = ', data, ') ');
     history.push('/home');
 
     this.setState({
       loggedInStatus: "LOGGED_IN",
-      matricule: data.matricule
+      matricule: data.matricule,
+      user: data.prenom.charAt(0) + data.prenom.slice(1).toLowerCase() + " " + data.nom.toUpperCase()
     });
-    
   }
 
   handleLogout () {
@@ -64,18 +64,20 @@ class App extends React.Component {
     console.log('this.state.matricule = ', this.state.matricule);
  
     return (
-      <Router history={history} >
+      <Router>
         <div>
         <br />
         <Switch>
-            <Route exact path="/"> 
-              <Connect 
-                handleSuccessfulAuth={this.state.loggedInStatus} 
-                handleLogin={this.handleLogin} />
+            <Route exact path="/" children={({history}) => 
+            ( <Connect 
+              handleSuccessfulAuth={this.state.loggedInStatus} 
+              handleLogin={(data) => this.handleLogin(data,history) } />)} > 
+              
             </Route>
-            <Route exact path="/home"> 
+            <Route
+             path="/home"> 
               <Navigation 
-                matricule={this.state.matricule} 
+                matricule={this.state.user} 
                 handleLogout={this.handleLogout} />
             </Route>
         </Switch>

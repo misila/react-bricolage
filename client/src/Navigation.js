@@ -13,7 +13,7 @@ class Navigation extends Component {
             <div className="siteNav family-sans navbar navbar-expand bg-primary navbar-dark higher">
                 <div className="container-fluid">
                     <a href="/" className="navbar-brand ">
-                        <FaUsers className="mr-1" /> Bienvenu(e)  { matricule }  
+                        <FaUsers className="mr-1" /> Bienvenu(e)  { matricule } &nbsp; 
                         <IoIosPower className="mr-1" />
                     </a>
                     <div className="navbar-nav mt-auto">
