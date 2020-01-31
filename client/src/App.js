@@ -76,9 +76,7 @@ class App extends React.Component {
             </Route>
             <Route
              path="/home"> 
-              <Navigation 
-                matricule={this.state.user} 
-                handleLogout={this.handleLogout} />
+              <Navigation matricule={this.state.matricule} user={this.state.user}  handleLogout={this.handleLogout} />
             </Route>
         </Switch>
         </div>
