@@ -1,89 +1,75 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Connect from './Connect';
 import Navigation from './Navigation';
 import { createBrowserHistory } from "history";
 import { useHistory } from 'react-router-dom';
 
+
 import { BrowserRouter as Router,
          Switch,
-         Route
+         Route,
+         Redirect
  } from 'react-router-dom';
 
 
 const history = createBrowserHistory();
 
-const Auth = {
+const bricoAuth = {
   isAuthenticated: false,
   authenticate(cb) {
-    Auth.isAuthenticated = true;
+    bricoAuth.isAuthenticated = true;
     setTimeout(cb, 100);
   },
   signOut(cb) {
-    Auth.isAuthenticated = false;
+    bricoAuth.isAuthenticated = false;
     setTimeout(cb, 100);
   }
 };
 
 
+const PrivateRoute = ({component: Component, ...rest}) => (
+  <Route {...rest} render={(props) => (
+      bricoAuth.isAuthenticated === true
+      ? <Component {...props} />
+      : <Redirect to='/' />
+  )} />
+)
 
 
-class App extends React.Component {
+function App(){
 
-  constructor(){
-    super();
-    this.state = {
-      user: null,
-      matricule: null,
-      loggedInStatus: "NOT_LOGGED_IN"
-    };
+  const [user, setUser] = useState(null);
+  const [matricule, setMatricule] = useState(null);
+  const [loggedInStatus, setLoggedInStatus] = useState('NOT_LOGGED_IN');
+  
 
-    this.handleLogin = this.handleLogin.bind(this);
-    this.handleLogout = this.handleLogout.bind(this);
-  }
-
-  handleLogin (data, history) {
-    console.log(' App.js, handleLogin (data = ', data, ') ');
-    history.push('/home');
-
-    this.setState({
-      loggedInStatus: "LOGGED_IN",
-      matricule: data.matricule,
-      user: data.prenom.charAt(0) + data.prenom.slice(1).toLowerCase() + " " + data.nom.toUpperCase()
-    });
-  }
-
-  handleLogout () {
-    this.setState({
-      loggedInStatus: "NOT_LOGGED_IN",
-      matricule: {}
-    });
-  }
-
-  render() {
-
-    console.log('this.state.matricule = ', this.state.matricule);
- 
-    return (
-      <Router>
-        <div>
-        <br />
-        <Switch>
-            <Route exact path="/" children={({history}) => 
-            ( <Connect 
-              handleSuccessfulAuth={this.state.loggedInStatus} 
-              handleLogin={(data) => this.handleLogin(data,history) } />)} > 
+  return (
+    <Router>
+      <div>
+      <br />
+      <Switch>
+        <Route exact path="/" children={({history}) => 
+         ( <Connect 
+            handleSuccessfulAuth={loggedInStatus} 
+            handleLogin={ (data) => {
               
-            </Route>
-            <Route
-             path="/home"> 
-              <Navigation matricule={this.state.matricule} user={this.state.user}  handleLogout={this.handleLogout} />
-            </Route>
-        </Switch>
-        </div>
-
-      </Router>);
-
-  }
+              setMatricule(data.matricule);
+              setUser(data.prenom.charAt(0) + data.prenom.slice(1).toLowerCase() + " " + data.nom.toUpperCase());
+              setLoggedInStatus("LOGGED_IN");
+              history.push('/home');
+            }} 
+           />)} /> 
+          <Route path="/home">
+            <Navigation matricule={matricule} user={user} handleLogout={ () => {
+              setUser(null);
+              setLoggedInStatus("NOT_LOGGED_IN");
+              setMatricule(null);
+            }} />
+          </Route>
+      </Switch>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
